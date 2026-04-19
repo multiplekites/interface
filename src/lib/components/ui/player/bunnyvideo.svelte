@@ -226,6 +226,7 @@
   }
 
   async function rebuildBackendPipeline (startTime: number, initial = false) {
+    readyState = 0
     await clearIterators()
 
     const playbackVideoTracks = await filterAsync(await input.getVideoTracks(), track => track.canDecode())
@@ -252,7 +253,6 @@
     videoSink = new CanvasSink(selectedVideo, { poolSize: 2, fit: 'contain' })
     audioSink = selectedAudio && new AudioBufferSink(selectedAudio)
 
-    readyState = 0
     playbackTimeAtStart = clamp(currentTime)
 
     videoWidth = canvas.width = selectedVideo.displayWidth
@@ -360,6 +360,7 @@
     const wasPaused = paused
     pause()
 
+    readyState = 1
     playbackTimeAtStart = await startBackendVideoIterator(time)
     setCurrentTime()
 
@@ -445,6 +446,20 @@
   $: if (Math.abs(target - lastObservedCurrentTime) > 0.001) {
     lastObservedCurrentTime = target
     seekBackendTo(target).catch(handleBackendError)
+  }
+
+  let sentinel: WakeLockSentinel | undefined
+
+  async function lock () {
+    sentinel = await navigator.wakeLock?.request?.('screen')
+  }
+  function unlock () {
+    sentinel?.release()
+  }
+  $: if (paused) {
+    unlock()
+  } else {
+    lock()
   }
 
   $: if (paused !== lastSyncPaused) {
