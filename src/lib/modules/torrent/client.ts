@@ -32,7 +32,7 @@ const defaultProtocolStatus = { dht: false, lsd: false, pex: false, nat: false, 
 export const server = new class ServerClient {
   last = persisted<{ media: Media, id: string, episode: number } | null>('last-torrent', null)
   active = writable<Promise<{ media: Media, id: string, episode: number, files: TorrentFile[] } | null>>()
-  downloaded = writable(this.cachedSet())
+  downloaded = writable(new Set<string>())
 
   stats = this._timedSafeStore(defaultTorrentInfo, native.torrentInfo, SUPPORTS.isUnderPowered ? 3000 : 200)
 
@@ -73,17 +73,19 @@ export const server = new class ServerClient {
     this.stats.subscribe((stats) => {
       native.downloadProgress(stats.progress)
     })
+
+    this.cachedTorrents()
   }
 
   async updateLibrary () {
-    const library = native.library()
-    this.downloaded.value = library.then(lib => new Set(lib.map(({ hash }) => hash)))
-    this.library.value = await library
+    const library = await native.library()
+    this.downloaded.value = new Set(library.map(({ hash }) => hash))
+    this.library.value = library
   }
 
-  async cachedSet () {
+  async cachedTorrents () {
     debug('fetching cached torrents')
-    return new Set(await native.cachedTorrents())
+    this.downloaded.value = new Set(await native.cachedTorrents())
   }
 
   play (id: string, media: Media, episode: number, torrent: string | ArrayBufferView = id) {
@@ -108,7 +110,7 @@ export const server = new class ServerClient {
     debug('torrent play result', result)
     const hash = result.files[0]!.hash
     if (get(this.last)?.id === id) this.last.set({ id: hash, media, episode })
-    this.downloaded.value = this.cachedSet()
+    this.downloaded.value.add(hash)
     this._addNZBs(hash)
     return result
   }
