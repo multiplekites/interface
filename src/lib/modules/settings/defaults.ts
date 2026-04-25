@@ -22,7 +22,7 @@ export default {
   dhtPort: 0,
   missingFont: true,
   maxConns: 50,
-  subtitleRenderHeight: SUPPORTS.isAndroid ? '720' : '0' as keyof typeof subtitleResolutions,
+  subtitleRenderHeight: (SUPPORTS.isAndroid || SUPPORTS.isIOS) ? '720' : '0' as keyof typeof subtitleResolutions,
   subtitleLanguage: 'eng' as keyof typeof languageCodes,
   audioLanguage: 'jpn' as keyof typeof languageCodes,
   enableDoH: false,
@@ -44,5 +44,5 @@ export default {
   showHentai: false,
   hideSpoilers: false,
   unsafeWebGPU: false,
-  bunnyPlayer: false
+  bunnyPlayer: SUPPORTS.isIOS
 }

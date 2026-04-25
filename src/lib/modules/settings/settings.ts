@@ -28,7 +28,7 @@ export const malClientID = persisted('mal-client-id', malID, {
   beforeRead: v => v || malID
 })
 
-export const nsfw = derived(settings, $settings => ($settings.showHentai ? null : ['Hentai']) as ['Hentai'] | null)
+export const nsfw = derived(settings, $settings => ($settings.showHentai ? null : ['Hentai']))
 
 debug.subscribe((value) => {
   Debug.enable(value)

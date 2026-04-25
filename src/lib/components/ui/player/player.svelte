@@ -87,10 +87,10 @@
   let readyState = 0
   $: safeduration = isFinite(duration) ? duration : currentTime
   const volume = persisted('volume', 1)
-  $: exponentialVolume = SUPPORTS.isAndroid ? 1 : $volume ** 3
+  $: exponentialVolume = (SUPPORTS.isAndroid || SUPPORTS.isIOS) ? 1 : $volume ** 3
   let muted = false
 
-  const timeFormat = persisted('timeFormat', 'positive' as 'positive' | 'negative')
+  const timeFormat = persisted('timeFormat', 'positive')
 
   // elements
   let fullscreenElement: HTMLElement | null = null
@@ -863,7 +863,7 @@
         </div>
       {/if}
       <Options {wrapper} bind:openPath {video} {seekTo} screenshot={ss} {selectAudio} {selectVideo} {fullscreen} chapters={$chapters} {subtitles} {videoFiles} {selectFile} {pip} bind:playbackRate={$playbackRate} bind:subtitleDelay id='player-options-button-top'
-        class='{($settings.minimalPlayerUI || SUPPORTS.isAndroid) ? 'inline-flex' : 'mobile:inline-flex hidden'} p-3 size-12 absolute z-[1] top-4 left-4 bg-black/20 pointer-events-auto transition-opacity delay-150 select:opacity-100 {immersed && 'opacity-0'}' />
+        class='{($settings.minimalPlayerUI || SUPPORTS.isAndroid || SUPPORTS.isIOS) ? 'inline-flex' : 'mobile:inline-flex hidden'} p-3 size-12 absolute z-[1] top-4 left-4 bg-black/20 pointer-events-auto transition-opacity delay-150 select:opacity-100 {immersed && 'opacity-0'}' />
       {#if fastForwarding}
         <div class='absolute top-10 font-bold text-sm animate-[fade-in_.4s_ease] flex items-center leading-none bg-black/60 px-4 py-2 rounded-2xl'>x2 <FastForward class='ml-2' size='12' fill='currentColor' /></div>
       {/if}
@@ -917,7 +917,7 @@
         </div>
       </div>
       <Seekbar {duration} {currentTime} buffer={buffer / duration * 100} chapters={$chapters} bind:seeking bind:seek={seekPercent} on:seeked={finishSeek} on:seeking={startSeek} {thumbnailer} on:keydown={seekBarKey} on:dblclick={fullscreen} />
-      <div class='justify-between gap-2 {($settings.minimalPlayerUI || SUPPORTS.isAndroid) ? 'hidden' : 'mobile:hidden flex'}'>
+      <div class='justify-between gap-2 {($settings.minimalPlayerUI || SUPPORTS.isAndroid || SUPPORTS.isIOS) ? 'hidden' : 'mobile:hidden flex'}'>
         <div class='flex text-white gap-2'>
           <Button class='p-3 size-12 relative shrink-0' variant='ghost' on:click={playPause} on:keydown={keywrap(playPause)} id='player-play-pause-button' data-up='#player-seekbar'>
             {#if paused}

@@ -36,6 +36,7 @@
   import Progress from '../Progress.svelte'
 
   import SettingCard from '$lib/components/SettingCard.svelte'
+  import { Button } from '$lib/components/ui/button'
   import { Input } from '$lib/components/ui/input'
   import { Switch } from '$lib/components/ui/switch'
   import native from '$lib/modules/native'
@@ -87,13 +88,19 @@
   <SettingCard class='bg-transparent' let:id title='Forwarded Torrent Port' description='Forwarded port used for incoming torrent connections. 0 automatically finds an open unused port. Change this to a specific port if you forwarded manually, or if you use a VPN.'>
     <Input type='number' inputmode='numeric' pattern='[0-9]*' min='0' max='65536' bind:value={$settings.torrentPort} {id} class='w-32 shrink-0 bg-background' />
   </SettingCard>
-  {#if !SUPPORTS.isAndroid}
-    <SettingCard class='bg-transparent' let:id title='Use DNS Over HTTPS' description='Enables DNS Over HTTPS, useful if your ISP blocks certain domains.'>
-      <Switch {id} bind:checked={$settings.enableDoH} />
-    </SettingCard>
-    <SettingCard class='bg-transparent' let:id title='DNS Over HTTPS URL' description='What URL to use for querying DNS Over HTTPS.'>
-      <Input type='url' bind:value={$settings.doHURL} {id} class='w-80 shrink-0 bg-background' />
-    </SettingCard>
+  {#if !SUPPORTS.isIOS}
+    {#if !SUPPORTS.isAndroid}
+      <SettingCard let:id title='Use DNS Over HTTPS' description='Enables DNS Over HTTPS, useful if your ISP blocks certain domains.'>
+        <Switch {id} bind:checked={$settings.enableDoH} />
+      </SettingCard>
+      <SettingCard let:id title='DNS Over HTTPS URL' description='What URL to use for querying DNS Over HTTPS.'>
+        <Input type='url' bind:value={$settings.doHURL} {id} class='w-80 shrink-0 bg-background' />
+      </SettingCard>
+    {:else}
+      <SettingCard title='Use DNS Over HTTPS' description="Enables DNS Over HTTPS, useful if your ISP blocks certain domains. On Android this is a system setting, which cannot be changed here. It's usually named 'Private DNS' or 'DNS over HTTPs'.">
+        <Button class='font-bold' on:click={() => native.setDOH('')} variant='secondary'>Configure DoH</Button>
+      </SettingCard>
+    {/if}
   {/if}
 </div>
 

@@ -44,7 +44,7 @@
 </script>
 
 <svelte:head>
-  <meta name='viewport' content='width=device-width, initial-scale={SUPPORTS.isAndroidTV ? $settings.uiScale / devicePixelRatio : SUPPORTS.isAndroid ? $settings.uiScale : 1}, maximum-scale=2, user-scalable=0, viewport-fit=cover' />
+  <meta name='viewport' content='width=device-width, initial-scale={SUPPORTS.isAndroidTV ? $settings.uiScale / devicePixelRatio : (SUPPORTS.isAndroid || SUPPORTS.isIOS) ? $settings.uiScale : 1}, maximum-scale=2, user-scalable=0, viewport-fit=cover' />
 </svelte:head>
 
 <div class={cn('size-full flex flex-col backface-hidden bg-black relative overflow-clip')} bind:this={root} id='root'>

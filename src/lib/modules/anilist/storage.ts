@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   SerializedEntries,
@@ -8,7 +9,7 @@ import type {
 const getRequestPromise = <T>(request: IDBRequest<T>): Promise<T> => {
   return new Promise((resolve, reject) => {
     request.onerror = () => {
-      reject(request.error as Error)
+      reject(request.error)
     }
 
     request.onsuccess = () => {
@@ -20,7 +21,7 @@ const getRequestPromise = <T>(request: IDBRequest<T>): Promise<T> => {
 const getTransactionPromise = (transaction: IDBTransaction): Promise<any> => {
   return new Promise((resolve, reject) => {
     transaction.onerror = () => {
-      reject(transaction.error as Error)
+      reject(transaction.error)
     }
 
     transaction.oncomplete = resolve

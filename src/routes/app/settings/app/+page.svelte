@@ -105,7 +105,7 @@
 </script>
 
 <div class='font-weight-bold text-xl font-bold'>App Settings</div>
-{#if !SUPPORTS.isAndroid}
+{#if !SUPPORTS.isAndroid && !SUPPORTS.isIOS}
   <SettingCard let:id title='Hide App To Tray' description='Makes the app hide to tray instead of closing when you close the window. This is useful if you want to keep the torrent client open in the background to seed/leech.'>
     <Switch {id} bind:checked={$settings.hideToTray} />
   </SettingCard>
@@ -131,7 +131,7 @@
   <Button on:click={copyDevice} class='btn btn-primary font-bold'>Copy To Clipboard</Button>
 </SettingCard>
 
-{#if !SUPPORTS.isAndroid}
+{#if !SUPPORTS.isAndroid && !SUPPORTS.isIOS}
   <SettingCard title='Log Output' description='Copy debug logs to clipboard. Once you enable a logging level you can use this to quickly copy the created logs to clipboard instead of navigating to the log file in directories.'>
     <Button on:click={copyLogs} class='btn btn-primary font-bold'>Copy To Clipboard</Button>
   </SettingCard>

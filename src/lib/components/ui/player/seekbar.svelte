@@ -131,7 +131,7 @@
   let lastDbl = 0
   function customDoubleClick (e: MouseEvent) {
     const now = Date.now()
-    if (now - lastDbl < (SUPPORTS.isAndroid ? 500 : 200)) {
+    if (now - lastDbl < ((SUPPORTS.isAndroid || SUPPORTS.isIOS) ? 500 : 200)) {
       dispatch('dblclick', e)
     }
     lastDbl = now
